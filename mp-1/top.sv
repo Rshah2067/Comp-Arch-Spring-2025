@@ -13,6 +13,7 @@ module top #(
   logic [$clog2(PWM_INTERVAL)-1:0] g_pwm;
   logic [$clog2(PWM_INTERVAL)-1:0] b_pwm;
 
+
   logic red_led;
   logic green_led;
   logic blue_led;
