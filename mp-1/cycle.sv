@@ -21,14 +21,14 @@ module cycle #(
     output logic [$clog2(PWM_INTERVAL)-1:0] b_pwm
 );
 
-    localparam highholding = 3'b000;
-    localparam highholdingtwo = 3'b001;
-    localparam lowholding = 3'b010;
-    localparam lowholdingtwo = 3'b011;
-    localparam lowramping = 3'b100;
-    localparam highramping = 3'b101;
+    localparam hightwo = 3'b000;
+    localparam fade = 3'b001;
+    localparam low = 3'b010;
+    localparam lowtwo = 3'b011;
+    localparam ramp = 3'b100;
+    localparam high = 3'b101;
     //first state of the 
-    logic [2:0] current_state = highholdingtwo;
+    logic [2:0] current_state = hightwo;
     logic [2:0] next_state;
     //FSM variables
     logic time_to_transition = 1'b0;
@@ -52,18 +52,18 @@ module cycle #(
     always_comb begin
         next_state = 3'bxxx;
         case (current_state)
-            highholdingtwo:
-                next_state = lowramping;
-            lowramping:
-                next_state = lowholding;
-            lowholding:
-                next_state = lowholdingtwo;
-            lowholdingtwo:
-                next_state = highramping;
-            highramping:
-                next_state =highholding;
-            highholding:
-                next_state = highholdingtwo;
+            hightwo:
+                next_state = fade;
+            fade:
+                next_state = low;
+            low:
+                next_state = lowtwo;
+            lowtwo:
+                next_state = ramp;
+            ramp:
+                next_state =high;
+            high:
+                next_state = hightwo;
         endcase
     end
     //Advances FSM Counter every clock cycle and step counter
@@ -93,41 +93,46 @@ module cycle #(
     always_ff @(posedge time_to_step) begin
         //Update the PWM Value for each signal based on signal shift
         //either 
-        if (current_state == highholding) begin
+        if (current_state == hightwo) begin
             //green is in high fade blue is in low hold
             r_pwm <= PWM_INTERVAL;
-            g_pwm <= 0;
-            b_pwm <= b_pwm - PWM_DELTA;
+            g_pwm <= g_pwm + PWM_DELTA;
+            b_pwm <= 0;
         end
-        else if (current_state == lowramping) begin
+        else if (current_state == fade) begin
             //green is in high hold blue is in low hold
             r_pwm <=r_pwm - PWM_DELTA;
             g_pwm <= PWM_INTERVAL;
             b_pwm <= 0;
         end
-        else if (current_state == lowholding) begin
+        else if (current_state == low) begin
             //green is in high hold blue is in high fade
             r_pwm <=0;
             g_pwm <=PWM_INTERVAL;
             b_pwm <= b_pwm + PWM_DELTA;
         end
-        else if (current_state == lowholdingtwo) begin
+        else if (current_state == lowtwo) begin
             //green is low fading and blue is high holding
             r_pwm <=0;
-            g_pwm <= g_pwm + PWM_DELTA;
+            g_pwm <= g_pwm - PWM_DELTA;
             b_pwm <= PWM_INTERVAL;
         end
-        else if (current_state == highramping) begin
+        else if (current_state == ramp) begin
             //green is low holding blue is high holding
-            r_pwm <= r_pwm +PWM_INTERVAL;
+            r_pwm <= r_pwm + PWM_DELTA;
             g_pwm <= 0;
             b_pwm <= PWM_INTERVAL;
         end
-        else if (current_state == highholdingtwo) begin
+        else if (current_state == high) begin
             //green is holding low, blue is fading low
             r_pwm <= PWM_INTERVAL;
             g_pwm <= 0;
             b_pwm <= b_pwm - PWM_DELTA;
+        end
+        else begin
+            r_pwm <= r_pwm;
+            g_pwm <= g_pwm;
+            b_pwm <= b_pwm;
         end
     end
 endmodule

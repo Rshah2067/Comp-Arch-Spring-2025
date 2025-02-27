@@ -19,7 +19,7 @@ module cycle_tb;
     initial begin
         $dumpfile("cycle.vcd");
         $dumpvars(0,cycle_tb);
-         #80000000
+         #100000000
          $finish;
     end
     always begin

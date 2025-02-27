@@ -8,7 +8,7 @@ module pwm #(
     output logic pwm_out
 );
     //PWM Counter
-    logic [$clog2(PWM_INTERVAL)-1:0] pwm_count;
+    logic [$clog2(PWM_INTERVAL)-1:0] pwm_count = 0;
     
     always_ff @(posedge clk) begin
         if (pwm_count == PWM_INTERVAL -1) begin
