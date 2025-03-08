@@ -17,13 +17,7 @@ module memory #(
     end
 
     always_ff @(posedge clk) begin
-        if (invert_data) begin
-            data[8:0] <= ~samplememory[read_address];
-            data[9] <=0;
-        end
-        else begin
             data[8:0] <= samplememory[read_address];
             data[9] <=1;
-        end
     end
 endmodule

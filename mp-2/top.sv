@@ -16,6 +16,7 @@ module top(
     output logic    _48b   //D9
 );
     logic[6:0] address = 0;
+    logic[9:0] raw_data;
     logic[9:0] data;
     //FSM states using one hot encoding where first bit is inversion over x axis and 0th bit is inversion over y axis ()
     parameter q1 = 2'b00;
@@ -31,7 +32,7 @@ module top(
         .clk    (clk),
         .invert_data (state[1]),
         .read_address (address),
-        .data (data)
+        .data (raw_data)
     );
     //assign the next FSM State
     always_comb begin
@@ -63,6 +64,12 @@ module top(
         //reverse order that the sample is traversed
         else if (state[0] == 1) begin
             address <= address -1;
+        end
+        if (state[1] == 1) begin
+            data <= ~raw_data;
+        end
+        else begin
+            data <= raw_data;
         end
     end
  
