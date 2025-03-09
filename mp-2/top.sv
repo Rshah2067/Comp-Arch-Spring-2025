@@ -16,7 +16,7 @@ module top(
     output logic    _48b   //D9
 );
     logic[6:0] address = 0;
-    logic[9:0] raw_data;
+    logic[8:0] raw_data;
     logic[9:0] data;
     //FSM states using one hot encoding where first bit is inversion over x axis and 0th bit is inversion over y axis ()
     parameter q1 = 2'b00;
@@ -66,10 +66,12 @@ module top(
             address <= address -1;
         end
         if (state[1] == 1) begin
-            data <= ~raw_data;
+            data[8:0] <= ~raw_data;
+            data[9] <=0;
         end
         else begin
-            data <= raw_data;
+            data[8:0] <= raw_data;
+            data[9] <=1;
         end
     end
  
@@ -77,7 +79,5 @@ module top(
     //We know the MSB of our output/ D9 on our DAC is always high
 
     assign {_48b, _45a, _49a, _3b, _5a, _0a, _2a, _4a, _6a, _9b} =  data;
-
-
 
 endmodule
