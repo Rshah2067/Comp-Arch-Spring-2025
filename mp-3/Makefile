@@ -1,4 +1,4 @@
-filename = top
+filename = alu
 pcf_file = ../common/iceBlinkPico.pcf
 
 build:
