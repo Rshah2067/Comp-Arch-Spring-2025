@@ -12,9 +12,7 @@
 //a2-7 x12-17 Function Arguements
 //s2-11 x18-27 saved registers
 //t3-6 x28-31 temp registers
-module registerfile #(
-    parameter INIT_FILE
-)(
+module registerfile (
     input logic clk,
     input logic read_address_1 [4:0],
     input logic read_address_2 [4:0],
@@ -28,8 +26,7 @@ logic [31:0] read_value_1;
 logic [31:0] read_value_2;
 //the registers are represented as a memory array
 logic [31:0] registers [31:0];
-//Load in Register File Memory
-//TODO implement Pointers
+//Load in Register File Memory as all 0s
 int i;
 initial begin
     for (i = 0; i < 4096; i++) begin
@@ -60,3 +57,4 @@ always_ff(@negedge clk) begin
         }
     end
 end
+endmodule
