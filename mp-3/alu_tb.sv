@@ -2,7 +2,7 @@
 `include "alu.sv"
 module alu_tb;
     //operands
-    logic[31:0] adder_op1,adder_op2,comperator_op1,comperator_op2,shifter_op1,shifter_op2;
+    logic[31:0] oper1,oper2;
     //results
     logic[31:0] adder_rsv,comperator_rsv,shifter_rsv;
     //funct
@@ -10,8 +10,8 @@ module alu_tb;
     logic[2:0] funct3;
     task add(input logic [31:0] op1,input logic [31:0] op2, output logic[31:0] rsv);
         begin
-            adder_op1 = op1;
-            adder_op2 = op2;
+            oper1 = op1;
+            oper2 = op2;
             funct3 = 3'b000;
             funct7 = 1'b0;
             #10
@@ -20,8 +20,8 @@ module alu_tb;
     endtask
     task sub(input logic [31:0] op1,input logic [31:0] op2, output logic[31:0] rsv);
     begin
-        adder_op1 = op1;
-        adder_op2 = op2;
+        oper1 = op1;
+        oper2 = op2;
         funct3 = 3'b000;
         funct7 = 1'b1;
         #10
@@ -30,8 +30,8 @@ module alu_tb;
     endtask
     task sll(input logic [31:0] op1,input logic [31:0] op2, output logic[31:0] rsv);
     begin
-        shifter_op1 = op1;
-        shifter_op2 = op2;
+        oper1 = op1;
+        oper2 = op2;
         funct3 = 3'b001;
         funct7 = 1'b0;
         #10
@@ -40,8 +40,8 @@ module alu_tb;
     endtask
     task slt(input logic [31:0] op1,input logic [31:0] op2, output logic[31:0] rsv);
     begin
-        comperator_op1 = op1;
-        comperator_op2 = op2;
+        oper1 = op1;
+        oper2 = op2;
         funct3 = 3'b011;
         funct7 = 1'b0;
         #10
@@ -50,8 +50,8 @@ module alu_tb;
     endtask
     task sltu(input logic [31:0] op1,input logic [31:0] op2, output logic[31:0] rsv);
     begin
-        comperator_op1 = op1;
-        comperator_op2 = op2;
+        oper1 = op1;
+        oper2 = op2;
         funct3 = 3'b011;
         funct7 = 1'b0;
         #10
@@ -61,8 +61,8 @@ module alu_tb;
 
     task exclusiveor(input logic [31:0] op1,input logic [31:0] op2, output logic[31:0] rsv);
     begin
-        adder_op1 = op1;
-        adder_op2 = op2;
+        oper1 = op1;
+        oper2 = op2;
         funct3 = 3'b100;
         funct7 = 1'b0;
         #10
@@ -71,8 +71,8 @@ module alu_tb;
     endtask
     task srl(input logic [31:0] op1,input logic [31:0] op2, output logic[31:0] rsv);
     begin
-        shifter_op1 = op1;
-        shifter_op2 = op2;
+        oper1 = op1;
+        oper2 = op2;
         funct3 = 3'b101;
         funct7 = 1'b0;
         #10
@@ -81,8 +81,8 @@ module alu_tb;
     endtask
     task sra(input logic [31:0] op1,input logic [31:0] op2, output logic[31:0] rsv);
     begin
-        shifter_op1 = op1;
-        shifter_op2 = op2;
+        oper1 = op1;
+        oper2 = op2;
         funct3 = 3'b101;
         funct7 = 1'b1;
         #10
@@ -91,8 +91,8 @@ module alu_tb;
     endtask
     task orop(input logic [31:0] op1,input logic [31:0] op2, output logic[31:0] rsv);
     begin
-        adder_op1 = op1;
-        adder_op2 = op2;
+        oper1 = op1;
+        oper2 = op2;
         funct3 = 3'b110;
         funct7 = 1'b0;
         #10
@@ -101,8 +101,8 @@ module alu_tb;
     endtask
     task and_op(input logic [31:0] op1,input logic [31:0] op2, output logic[31:0] rsv);
     begin
-        adder_op1 = op1;
-        adder_op2 = op2;
+        oper1 = op1;
+        oper2 = op2;
         funct3 = 3'b111;
         funct7 = 1'b0;
         #10
@@ -110,14 +110,10 @@ module alu_tb;
     end
     endtask
     alu u1 (
-        .adder_op1 (adder_op1),
-        .adder_op2 (adder_op2),
         .adder_rsv (adder_rsv),
-        .shifter_op1 (shifter_op1),
-        .shifter_op2 (shifter_op2),
         .shifter_rsv (shifter_rsv),
-        .comperator_op1 (comperator_op1),
-        .comperator_op2 (comperator_op2),
+        .op1 (oper1),
+        .op2 (oper2),
         .comparator_rsv (comperator_rsv),
         .funct7 (funct7),
         .funct3 (funct3)

@@ -83,7 +83,7 @@ module memory #(
     end
 
     // Handle memory reads
-    always_ff @(posedge clk) begin
+    always_ff @(posedge clk or negedge clk) begin
         read_address1 <= read_address[1];
         read_address0 <= read_address[0];
         read_word <= funct3[1];
