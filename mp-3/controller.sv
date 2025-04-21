@@ -226,6 +226,29 @@ module controller(
                 funct7mux = 2'b10;
                 funct3_comp_mux =2'b00;
             end
+            //store instructions
+            7'b0100011:begin
+                //enable writing to memory
+                wen_mem = 1;
+                wen_reg = 0;
+                //give the memory unit correct funct 3 field
+                funct3_mem_mux = 1;
+                rdmux = 0;
+                //set the immediate value to I_imm
+                imm_gen_mux = 3'b101;
+                //pc
+                pc_icrement_mux = 2'b00;
+                pc_mux = 0;
+                //set the adder to caclulate address
+                funct3_mux = 1;
+                funct3_adder_mux =0;
+                funct7mux = 2'b10;
+                alusubselector = 2'b00;
+                op1_mux = 2'b00;
+                op2_mux = 2'b10;
+                rdvmux = 0;
+                ramux  =0;
+            end     
             //I type arithmatic instructions
             7'b0010011:begin
                 funct3_mem_mux = 1'b0;
@@ -243,55 +266,63 @@ module controller(
                 op1_mux = 2'b00;
                 op2_mux = 2'b10;
                 //setting funct fields to instruction
-                funct7mux = 2'b00;
                 funct3_mux = 1'b0;
                 funct3_comp_mux = 2'b00;
                 funct3_adder_mux =0;
                 //looking at funct3 to determine alu op
                 case(funct3_instruct)
-                    //add and sub
+                    //add
                     3'b000:begin
                         alusubselector =2'b00;
                         imm_gen_mux = 3'b000;
+                        funct7mux = 2'b10;
                     end
                     //sll
                     3'b001:begin
                         alusubselector = 2'b10;
                         imm_gen_mux = 3'b011;
+                        funct7mux = 2'b00;
                     end
                     //slt
                     3'b010:begin
                         alusubselector = 2'b01;
                         imm_gen_mux = 3'b000;
+                        funct7mux = 2'b10;
                     end
                     //sltu
                     3'b011:begin
                         alusubselector = 2'b01;
                         imm_gen_mux =3'b000;
+                        funct7mux = 2'b10;
                     end
                     //xor
                     3'b100:begin
                         alusubselector = 2'b00;
                         imm_gen_mux =3'b000;
+                        funct7mux = 2'b10;
                     end                        
                     //srli srai
                     3'b101:begin
                         alusubselector = 2'b10;
                         imm_gen_mux = 3'b011;
+                        funct7mux = 2'b00;
                     end
                     // or
                     3'b110:begin
                         alusubselector = 2'b00;
                         imm_gen_mux =3'b000;
+                        funct7mux = 2'b10;
                     end 
                     //and
                     3'b111:begin
                         alusubselector = 2'b00;
                         imm_gen_mux =3'b000;
+                        funct7mux = 2'b10;
                     end 
                     default:begin
                         alusubselector = 2'b00;
                         imm_gen_mux =3'b000;
+                        funct7mux = 2'b10;
                     end 
                 endcase
                 wen_reg = 1'b1;
@@ -378,162 +409,3 @@ module controller(
         endcase
     end
 endmodule
-// //Instruction Decoder
-//     always_comb begin
-//         //take in  opcode and slect muxes 
-//         case (opcode)
-//             //LUI
-//             7'b0110111: begin
-//                 //set correct immediate value out
-//                 imm_gen_mux = 3'b010;
-//                 //Set the operand to the immediate value and 0
-//                 op1_mux = 1'b1;
-//                 op2_mux = 2'b10;
-//                 //set the alu to the adding operation
-//                 alu_funct7_mux = 2'b01;
-//                 //set the alu result to adder
-//                 alusubselector = 2'b00;
-//                 //set the writeback path to the rdv of registerfile
-//                 ramux = 1'b0;
-//                 //set the program counter advance to +4
-//                 pc_icrement_mux = 2'b00;
-//             end
-//             //aupic
-//             7'b0010111:begin
-//                 //set correct immediate value generator
-//                 imm_gen_mux  = 3'b010;
-//                 //set operands to pc and immu
-//                 op1_mux = 1'b1;
-//                 op2_mux = 2'b10;
-//                 //set the alu to the adding operation
-//                 alu_funct7_mux = 2'b01;
-//                 //set the writeback to rdv of register file
-//                 rdvmux = 1'b0;
-//                 pc_icrement_mux = 2'b00;
-//             end
-//             //Jtype instruction
-//             7'b1101111:begin
-//             end
-//             //b type instruction
-//             7'b1100011:begin
-//             end
-//             //I type load
-//             7'b0000011: begin
-//                 //set immeidate type
-//                 imm_gen_mux = 3'b000;
-//                 //set the operands of ALU
-//                 op1_mux = 1'b0;
-//                 op2_mux = 2'b10;
-//                 //set the alu output path
-//                 alusubselector = 2'b00;
-//                 //select the alu output to the read instruction mux
-//                 alursvmux = 2'b10;
-//                 //set the ALU Read mux to address instead of PC
-//                 ramux = 1'b1;
-//                 //set the writeback path to be the instruction
-//                 rdvmux = 1'b1;
-//                 pc_icrement_mux = 2'b00;
-
-//             end
-//             //S type
-//             7'b0100011:begin
-//                 imm_gen_mux = 3'b101;
-//                 //set operands
-//                 op1_mux = 1'b0;
-//                 op2_mux = 2'b10;
-//                 //set alu add opcode
-//                 //set alu result
-//                 alusubselector = 2'b00;
-//                 //set the result of alu to go to write address
-//                 alursvmux = 3'b01;
-//                 //set rs2 to go to the read port of the memroy
-//                 pc_icrement_mux = 2'b00;
-
-//             end
-
-//             //I type Arethmatic
-//             7'b0010011:begin
-//                 //set the operands
-//                 op1_mux = 1'b0;
-//                 op2_mux = 2'b10;
-//                 //funct 3 should be from the instruction
-//                 funct3_mux = 1'b0;
-//                 //depending on funct 3 we will set different alu output
-//                 case (funct3)
-//                 3'b000:begin
-//                     alusubselector = 2'b00;
-//                     imm_gen_mux = 3'b000;
-//                 end
-//                 3'b010:begin
-//                     alusubselector = 2'b01;
-//                     imm_gen_mux = 3'b000;
-//                 end
-//                 3'b011:begin
-//                     alusubselector= 2'b01;
-//                     imm_gen_mux = 3'b000;
-//                 end
-//                 3'b100:begin
-//                     imm_gen_mux = 3'b000;
-//                     alusubselector = 2'b00;
-//                 end
-//                 3'b110:begin
-//                     alusubselector = 2'b00;
-//                     imm_gen_mux = 3'b000;
-//                 end
-//                 3'b001:begin
-//                     alusubselector = 2'b10;
-//                     imm_gen_mux = 3'b011;
-//                 end
-//                 3'b101:begin
-//                     alusubselector = 2'b10;
-//                     imm_gen_mux = 3'b011;
-//                 end
-//                 default:begin 
-//                     alusubselector = 2'b00;
-//                     imm_gen_mux = 3'b000;
-
-//                 end
-//                 endcase
-//                 //set writeback
-//                 alursvmux = 2'b00;
-//                 rdvmux = 1'b0;
-//                 //set pc counter
-//                 pc_icrement_mux = 2'b00;
-//             end
-//             //R Type
-//             7'b0110011:begin 
-//                 //set the operands
-//                 op1_mux = 1'b0;
-//                 op2_mux = 2'b00;
-//                 //funct 3 should be from the instruction
-
-//                 //depending on funct 3 we will set different alu output
-//                 case (funct3)
-//                 3'b000:
-//                     alusubselector = 2'b00;
-//                 3'b001:
-//                     alusubselector = 2'b01;
-//                 3'b010:
-//                     alusubselector = 2'b01;
-//                 3'b011:
-//                     alusubselector= 2'b01;
-//                 3'b100:
-//                     alusubselector = 2'b00;
-//                 3'b101:
-//                     alusubselector = 2'b10;
-//                 3'b110:
-//                     alusubselector = 2'b00;
-//                 default:
-//                     alusubselector = 2'b00;
-//                 endcase
-//                 //set writeback
-//                 alursvmux = 2'b00;
-//                 rdvmux = 1'b0;
-//                 //set pc counter
-//                 pc_icrement_mux = 2'b00;
-//             end
-//             default: begin
-            
-//             end
-//         endcase
-//     end

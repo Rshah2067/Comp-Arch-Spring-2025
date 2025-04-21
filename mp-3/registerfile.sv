@@ -40,7 +40,7 @@ always_comb begin
 end
 
 //Handeling Writes
-always_ff@(posedge clk) begin
+always_ff@(negedge clk) begin
     //check for write flag
     if (write_enable) begin
         //check if the write address is to the 0 register, in which case it is ignored

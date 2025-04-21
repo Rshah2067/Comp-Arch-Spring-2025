@@ -83,30 +83,30 @@ module memory #(
     end
 
     // Handle memory reads
-    always_ff @(posedge clk or negedge clk) begin
-        read_address1 <= read_address[1];
-        read_address0 <= read_address[0];
-        read_word <= funct3[1];
-        read_half <= funct3[0];
-        read_unsigned <= funct3[2];
+    always_comb begin
+        read_address1 =read_address[1];
+        read_address0 = read_address[0];
+        read_word = funct3[1];
+        read_half = funct3[0];
+        read_unsigned = funct3[2];
 
         if (read_address[31:13] == 19'd0) begin
-            read_value <= memory[read_address[12:2]];
+            read_value = memory[read_address[12:2]];
         end
         else if (read_address[31:13] == 19'h7FFFF) begin
             case(read_address[12:2])
                 11'h7FF:
-                    read_value <= leds;
+                    read_value = leds;
                 11'h7FE:
-                    read_value <= millis;
+                    read_value = millis;
                 11'h7FD:
-                    read_value <= micros;
+                    read_value = micros;
                 default:
-                    read_value <= 32'd0;
+                    read_value = 32'd0;
             endcase
         end
         else begin
-            read_value <= 32'd0;
+            read_value = 32'd0;
         end
     end
 

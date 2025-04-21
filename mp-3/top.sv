@@ -49,6 +49,7 @@ module top (
     //Program Counter
     logic [31:0] pc_increment;
     logic [31:0] pc;
+    logic [31:0] pc_latched;
     //Controller
     logic wen_mem;
     logic wen_reg;
@@ -128,7 +129,8 @@ module top (
         .pc (pc),
         .reset (BOOT),
         .rs1 (rsv1),
-        .pc_mux (pc_mux)
+        .pc_mux (pc_mux),
+        .pc_latched (pc_latched)
     );
     // Add memory mapped peripherals
     memory #(
@@ -138,7 +140,7 @@ module top (
         .funct3 (funct3_mem),
         .write_mem (wen_mem),
         .write_address (wa),
-        .write_data (wd),
+        .write_data (rsv2),
         .read_address (ra),
         .read_data (rdvm),
         .led (LED),
@@ -189,7 +191,7 @@ module top (
     assign rd_instruct = instruction[11:7];
     assign rs1 = instruction[19:15];
     assign rs2 = instruction[24:20];
-
+    
     //instruction register
     always_ff @(posedge instruct_clk)begin
         instruction <= rdvm;
@@ -229,7 +231,7 @@ module top (
             2'b00:
                 op1 = rsv1;
             2'b01:
-                op1 = pc;
+                op1 = pc_latched;
             2'b10:
                 op1 = 32'd0;
             default:

@@ -65,7 +65,7 @@ module alu (
                 end
                 //sra
                 else begin
-                    shifter_rsv = (op1 >>> (op2 % 'd32));
+                    shifter_rsv = ($signed(op1) >>> (op2 % 'd32));
                 end
             end
             // in the default case we just give zero
