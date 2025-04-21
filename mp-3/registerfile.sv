@@ -30,6 +30,7 @@ initial begin
     for (i = 0; i < 31; i++) begin
         register[i] = 32'd0;
     end
+    register[1] =20;
 end
 //Register file latches on negative edge
 //handeling reads async

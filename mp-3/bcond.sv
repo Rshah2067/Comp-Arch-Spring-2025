@@ -18,7 +18,7 @@ module bcond(
                     branc_add = imm;
                 end
                 else begin
-                    branc_add = 32'd0;
+                    branc_add = 32'd4;
                 end
             end
             //inequality (Bne)
@@ -28,7 +28,7 @@ module bcond(
                     branc_add = imm;
                 end
                 else begin
-                    branc_add = 32'd0;
+                    branc_add = 32'd4;
                 end
             end
             //branch less than signed (blt)
@@ -37,7 +37,7 @@ module bcond(
                     branc_add = imm;
                 end
                 else begin
-                    branc_add = 32'd0;
+                    branc_add = 32'd4;
                 end
             //branch greater than or equal signed(bge)
             3'b101: begin
@@ -45,7 +45,7 @@ module bcond(
                     branc_add = imm;
                 end
                 else begin
-                    branc_add = 32'd0;
+                    branc_add = 32'd4;
                 end
             end
             //branch less than unsigned (bltu)
@@ -55,7 +55,7 @@ module bcond(
                     branc_add = imm;
                 end
                 else begin
-                    branc_add = 32'd0;
+                    branc_add = 32'd4;
                 end
             end
             //branch greater than equal to unsigned(bgeu)
@@ -65,11 +65,11 @@ module bcond(
                     branc_add = imm;
                 end
                 else begin
-                    branc_add = 32'd0;
+                    branc_add = 32'd4;
                 end
             end
             default:
-                branc_add = 32'd0;
+                branc_add = 32'd4;
         endcase
     end
 endmodule
