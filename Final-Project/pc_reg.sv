@@ -3,21 +3,19 @@
 module pc_reg (
     input clk,
     input logic pc_mux,
-    input logic reset,
     input logic [31:0] rs1,
     input [31:0] increment,
     output logic[31:0] pc,
     input logic pc_enable,
     output logic [31:0] pc_latched
 );
-
+    initial begin
+        pc = 0;
+        pc_latched = 0;
+    end
     //on each clock cycle we want to save the new value of pc counter
-    always_ff @(negedge clk or posedge reset) begin
-        if (reset) begin
-            pc <=0;
-            pc_latched <=0;
-        end 
-        else if (pc_enable) begin
+    always_ff @(negedge clk) begin
+        if (pc_enable) begin
             pc_latched <=pc;
             if (pc_mux)begin
                 pc <= rs1 + increment;

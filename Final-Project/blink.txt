@@ -1,0 +1,7 @@
+lui x1 0xFFFFF/load address for memory mapped pheripheries
+addi x1 x0 0xFFC//load lower address
+addi x2 x0 0x0FF //Store high value to x2
+sb x0 0(x1)//write high to blue led,
+sb x0 1(x1)//write low to the green
+sb x0 2(x1)//low to the red
+sb x0 3(x1)//low to user

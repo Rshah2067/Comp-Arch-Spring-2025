@@ -6,15 +6,16 @@
 `include "bcond.sv"
 `include "controller.sv"
 `include "statemachine.sv"
-//nextpnr
-//pll module
+`include "clockdivider.sv"
+
 module top (
-    input logic     clk,
-    input logic     BOOT, 
+    //input logic clk,
+    //input logic     BOOT, 
     output logic    RGB_R,
     output logic    RGB_B,
     output logic    RGB_G,
-    output logic    LED
+    output logic    LED,
+    output logic _48b
 );
     //Alu Operands and Results
     logic [31:0] op1;
@@ -55,6 +56,8 @@ module top (
     //Controller
     logic wen_mem;
     logic wen_reg;
+    logic reg_en;
+    logic reg_enable;
     //Conditional Branch
     logic [31:0] branc_add;
     //Intermediate nets
@@ -98,6 +101,8 @@ module top (
     logic pc_mux;
     //sets the rd register file to the rd instruction field or 0 when 0
     logic rdmux;
+    //clock division
+
     alu u1(
         .op1 (op1),
         .op2 (op2),
@@ -125,13 +130,12 @@ module top (
         .write_value (rdv),
         .read_data_1 (rsv1),
         .read_data_2 (rsv2),
-        .write_enable (wen_reg)
+        .write_enable (reg_enable)
     );
     pc_reg u4(
         .clk (clk),
         .increment (pc_increment),
         .pc (pc),
-        .reset (BOOT),
         .rs1 (rsv1),
         .pc_mux (pc_mux),
         .pc_latched (pc_latched),
@@ -150,7 +154,8 @@ module top (
         .led (LED),
         .blue (RGB_B),
         .green (RGB_G),
-        .red (RGB_R)
+        .red (RGB_R),
+        ._48b (_48b)
     );
     bcond u6(
         .imm (imm),
@@ -186,8 +191,33 @@ module top (
         .pc_en (pc_en),
         .instruct_en (instruct_en),
         .mem_en (mem_en),
-        .ra_mux (ra_mux)
+        .ra_mux (ra_mux),
+        .reg_en(reg_en)
     );
+    logic clk;
+    SB_HFOSC #(
+        .CLKHF_DIV("0b11")
+    )hfsocinst(
+        .CLKHFEN(1'b1),
+        .CLKHFPU(1'b1),
+        .CLKHF(clk)
+    );
+//     SB_PLL40_CORE #(
+//     .FEEDBACK_PATH("SIMPLE"),
+//     .DIVR(4'd0),
+//     .DIVF(7'd63), // main divisor
+//     .DIVQ(3'd6),  // post-scale divisor
+//     .FILTER_RANGE(3'b001),
+//     .PLLOUT_SELECT("GENCLK"),
+//     .ENABLE_ICEGATE(1'b0)
+// ) pll_inst (
+//     .REFERENCECLK(clk),
+//     .PLLOUTCORE(clk_div), // use this in your design
+//     .RESETB(1'b1),
+//     .BYPASS(1'b0),
+//     .LOCK(lock)
+// );
+
     //instruction splitter
     assign opcode = instruction[6:0];
     assign funct3_instruct = instruction[14:12];
@@ -205,6 +235,7 @@ module top (
     //write address of memory is always the alu result
     assign wa = alu_result;
     assign mem_enable = mem_en & wen_mem;
+    assign reg_enable = reg_en & wen_reg;
     //Mux controllers
     //MUX that selects the correct alu sub module to assign to the result
     always_comb begin

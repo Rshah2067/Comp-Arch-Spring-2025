@@ -3,7 +3,7 @@ pcf_file = ../common/iceBlinkPico.pcf
 
 build:
 	yosys -p "synth_ice40 -top top -json $(filename).json" $(filename).sv --debug
-	nextpnr-ice40 --up5k --package sg48 --json $(filename).json --pcf $(pcf_file) --asc $(filename).asc
+	nextpnr-ice40 --up5k --package sg48 --json $(filename).json --pcf $(pcf_file) --asc $(filename).asc  --freq 6
 	icepack $(filename).asc $(filename).bin
 
 prog: #for sram

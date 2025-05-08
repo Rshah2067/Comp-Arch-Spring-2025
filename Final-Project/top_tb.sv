@@ -9,7 +9,6 @@ module top_tb;
     logic reset;
     top u1(
         .clk (clk),
-        .BOOT (reset),
         .RGB_R (RGB_R),
         .RGB_B (RGB_B),
         .RGB_G (RGB_G),
@@ -22,11 +21,8 @@ module top_tb;
         logic [31:0] word;
         $dumpfile("top_tb.vcd");
         $dumpvars(0,top_tb);
-        reset = 1;
-        #1;
-        reset = 0;
         //start sim
-        #500;
+        #1000;
         //dump contents of register file to text file
         // Open file to write to
         fd = $fopen("register_dump.txt", "w");

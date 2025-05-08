@@ -26,10 +26,10 @@ module alu (
             //add/sub
             3'b000: begin
                 //check if we are adding or subtracting
-                case (funct7)
-                7'b0000000:
+                case (funct7[6])
+                1'b0:
                     adder_rsv = op1 + op2; 
-                7'b0100000:
+                1'b1:
                     adder_rsv = op1 - op2;
                 default:
                     adder_rsv = op1 + op2; 
@@ -56,16 +56,16 @@ module alu (
         case (funct3_adder)
             //sll
             3'b001: 
-                shifter_rsv = (op1 << (op2%'d32));
+                shifter_rsv = (op1 << (op2 &32'h0000001f));
             //srl or sra
             3'b101: begin
                 //srl
-                if (funct7 == 7'b0000000) begin
-                    shifter_rsv = (op1 >> (op2 % 'd32));
+                if (funct7[6] == 1'b0) begin
+                    shifter_rsv = (op1 >> (op2 &32'h0000001f));
                 end
                 //sra
                 else begin
-                    shifter_rsv = ($signed(op1) >>> (op2 % 'd32));
+                    shifter_rsv = ($signed(op1) >>> (op2 &32'h0000001f));
                 end
             end
             // in the default case we just give zero

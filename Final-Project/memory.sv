@@ -24,7 +24,6 @@
 // counts the number of milliseconds (mod 2^32) since the processor
 // started (0xFFFFFFF8, R), and a running timer that counts the number of
 // microseconds (mod 2^32) since the processor started (0xFFFFFFF4, R).
-
 module memory #(
     parameter INIT_FILE = ""
 ) (
@@ -38,7 +37,8 @@ module memory #(
     output logic led,  // Active-high PWM output for user LED
     output logic red,  // Active-high PWM output for red LED
     output logic green,  // Active-high PWM output for green LED
-    output logic blue  // Active-high PWM output for blue LED
+    output logic blue,  // Active-high PWM output for blue LED
+    output logic _48b
 );
 
   logic [31:0] read_value = 32'd0;
@@ -331,7 +331,7 @@ module memory #(
   assign red   = (pwm_counter < leds[23:16]);
   assign green = (pwm_counter < leds[15:8]);
   assign blue  = (pwm_counter < leds[7:0]);
-
+  
   // Implement millis counter
   always_ff @(posedge clk) begin
     if (millis_counter == 11999) begin

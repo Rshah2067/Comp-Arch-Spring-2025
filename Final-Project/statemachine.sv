@@ -4,25 +4,27 @@ module statemachine(
     output logic pc_en,
     output logic instruct_en,
     output logic mem_en,
+    output logic reg_en,
     output logic ra_mux
 );
 
 //three phases introduces an assmetry to our phase so we add on every
 //clock phase to our state. 
-localparam fetch = 3'b000;
-localparam operation = 3'b001;
-localparam operation2 = 3'b010;
-localparam writeback = 3'b011;
-localparam start = 3'b111;
+localparam fetch = 5'b00001;
+localparam operation = 5'b00010;
+localparam operation2 = 5'b00100;
+localparam writeback = 5'b01000;
+localparam start = 5'b10000;
 //The start phase is used on boot to load the first instruction
-logic [2:0] current_state;
+logic [4:0] current_state;
 //on a positive and negative edge advance state
 initial begin
     current_state = start;
 end
-logic [2:0] next_state;
-always_ff@(negedge clk) begin
-    current_state <= next_state;
+logic [4:0] next_state;
+
+always_ff@(posedge clk) begin
+        current_state <= next_state;
 end
 //determine next state
 always_comb begin
@@ -51,6 +53,7 @@ always_comb begin
             pc_en = 0;
             //we should always set the ra mux to instruction address during fetch
             ra_mux = 0;
+            reg_en= 0;
         end
         operation:begin
             //instruction reg should now hold value
@@ -58,24 +61,28 @@ always_comb begin
             mem_en = 0;
             pc_en = 0;
             ra_mux = 0;
+            reg_en= 0;
         end
         operation2:begin
             instruct_en = 0;
             pc_en =0;
             mem_en = 1;
             ra_mux = ra_mux_cont ? 1:0;
+            reg_en= 0;
         end
         writeback:begin
             pc_en =1;
             mem_en = 1;
             instruct_en = 0;
             ra_mux = ra_mux_cont ? 1:0;
+            reg_en= 1;
         end
         start:begin
             pc_en =0;
             mem_en = 0;
             instruct_en = 0;
             ra_mux = 0;
+            reg_en= 0;
         end
         default begin
             pc_en =0;
@@ -83,6 +90,7 @@ always_comb begin
             instruct_en = 0;
             //ra_mux should default to 0
             ra_mux =0;  
+            reg_en= 0;
         end
     endcase
 end
